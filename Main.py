@@ -5,13 +5,17 @@ app = QApplication([])
 
 window = QWidget()
 layout = QGridLayout()
+layout.setVerticalSpacing(20)
 
 window.setWindowTitle('Button Clicker')
 window.setGeometry(100, 100, 400, 300)
 
 button1 = QPushButton('Botón 1')
+button1.setStyleSheet("background-color: red")
 button2 = QPushButton('Botón 2')
+button2.setStyleSheet("background-color: green")
 button3 = QPushButton('Botón 3')
+button3.setStyleSheet("background-color: blue")
 
 """Listeners"""
 x = 0
@@ -104,7 +108,7 @@ layout.addWidget(panel3, 3, 0)
 layout.addWidget(button3, 3, 1)
 layout.addWidget(panel3F, 3, 2)
 layout.addWidget(progressBar, 4, 0, 1, 3)
-"""layout.addStretch()"""
+
 
 layout.setAlignment(panel0, Qt.AlignCenter)
 layout.setAlignment(panel1, Qt.AlignCenter)
@@ -119,3 +123,5 @@ window.setLayout(layout)
 window.show()
 
 app.exec_()
+
+
