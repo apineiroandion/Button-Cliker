@@ -1,105 +1,94 @@
+# Imports: PyQt5
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QProgressBar
 
+
+# Clase principal de la aplicación heredada de QWidget (ventana básica de PyQt5)
+class ButtonClickerApp(QWidget):
+    def __init__(self):
+        super().__init__()  # Llamamos al constructor de la clase padre
+
+        # Inicializa atributos
+        self.progressBar = None
+        self.paneles = []  # Cambiado a una lista vacía desde el inicio
+        self.total_clicks = 0  # Inicializado directamente a 0
+        self.contadores = [0, 0, 0]  # Inicializa directamente la lista de contadores
+
+        self.initUI()  # Inicializa la interfaz gráfica
+
+    # Función que configura la interfaz de usuario
+    def initUI(self):
+        # Ventanas
+        self.setWindowTitle('Button Clicker')  # Título
+        self.setGeometry(100, 100, 400, 300)  # Define el tamaño y posición de la ventana
+
+        # Layout principal (Vertical)
+        layout = QVBoxLayout()
+        self.setLayout(layout)  # Establece el layout como principal
+
+        # Crea 3 botones y 3 paneles dinámicamente
+        for i in range(3):
+            # Crear un QLabel para cada "Panel X" (donde X es el número del panel)
+            panel = QLabel(f'Panel {i + 1}')
+            layout.addWidget(panel)  # Añadimos el panel al layout
+
+            # Crear un botón que será "Botón X" y lo conectamos a la función 'actualizar'
+            boton = QPushButton(f'Botón {i + 1}')
+
+            # Metodo lambda que pasa el índice 'i' al metodo 'actualizar' cuando se hace clic
+            boton.clicked.connect(lambda _, index=i: self.actualizar(index))
+
+            # Añadimos el botón al layout
+            layout.addWidget(boton)
+
+            # Crear un QLabel para mostrar el valor del contador correspondiente
+            panelF = QLabel(str(self.contadores[i]))  # Muestra el valor inicial (0) del contador
+            layout.addWidget(panelF)  # Añadimos el QLabel al layout
+
+            # Guarda el QLabel del contador en la lista de paneles
+            self.paneles.append(panelF)
+
+        # Crear una barra de progreso para mostrar los clics totales
+        self.progressBar = QProgressBar()
+        self.progressBar.setValue(0)  # Inicializamos la barra en 0
+        self.progressBar.setFixedWidth(300)
+        layout.addWidget(self.progressBar)  # Añadimos la barra de progreso al layout
+
+        layout.addStretch()  # Mete un espacio flexible
+
+        # Alinear los paneles de los contadores al centro del layout
+        for panel in self.paneles:
+            layout.setAlignment(panel, Qt.AlignCenter)
+
+        # Alinear la barra de progreso al centro del layout
+        layout.setAlignment(self.progressBar, Qt.AlignCenter)
+
+    # Actualiza los contadores
+    def actualizar(self, index):
+        # Incrementar el contador del botón que fue presionado
+        self.contadores[index] += 1
+
+        # Actualizar el texto del QLabel que muestra el valor del contador
+        self.paneles[index].setText(str(self.contadores[index]))
+
+        # Actualizar el total de clics realizados
+        self.total_clicks += 1
+
+        # Actualizamos la barra de progreso, que se resetea cuando llega a 100
+        self.progressBar.setValue((self.total_clicks % 100))
+
+        # Si se han hecho exactamente 100 clics, mostramos un mensaje en la consola
+        if self.total_clicks % 100 == 0:
+            print("Bien!!!! Has tocado 100 botones!!!")
+            self.progressBar.setValue(0)  # Reinicia la barra de progreso a 0
+
+
+# Inicia la app
 app = QApplication([])
 
-window = QWidget()
-layout = QVBoxLayout()
-
-window.setWindowTitle('Button Clicker')
-window.setGeometry(100, 100, 400, 300)
-
-button1 = QPushButton('Botón 1')
-button2 = QPushButton('Botón 2')
-button3 = QPushButton('Botón 3')
-
-"""Listeners"""
-x = 0
-y = 0
-z = 0
-
-def actualizar(param):
-    elegir_variable(param)
-    actualizar_perCent()
-    progressBar.setValue(perCent)
-    completar()
-
-def elegir_variable(param):
-    if param == 1:
-        global x
-        x += 1
-        panel1F.setText(string_x())
-        print(x)
-    elif param == 2:
-        global y
-        y += 1
-        panel2F.setText(string_y())
-        print(y)
-    else:
-        global z
-        z += 1
-        panel3F.setText(string_z())
-        print(z)
-
-def string_x():
-    return str(x)
-
-def string_y():
-    return str(y)
-
-def string_z():
-    return str(z)
-
-"""Progress bar"""
-perCent = 0
-def actualizar_perCent():
-    global perCent
-    perCent += 1
-    print(perCent)
-
-progressBar = QProgressBar()
-progressBar.setValue(perCent)
-
-def completar():
-    if progressBar.value() == 100:
-        global perCent
-        print("Bien!!!! Has tocado 100 Botones!!!")
-        perCent = 0
-        progressBar.setValue(perCent)
-
-
-button1.clicked.connect(lambda: actualizar(1))
-button2.clicked.connect(lambda: actualizar(2))
-button3.clicked.connect(lambda: actualizar(3))
-
-"""Paneles de texto"""
-panel1 = QLabel('Panel 1')
-panel2 = QLabel('Panel 2')
-panel3 = QLabel('Panel 3')
-panel1F = QLabel(string_x())
-panel2F = QLabel(string_y())
-panel3F = QLabel(string_z())
-
-layout.addWidget(panel1)
-layout.addWidget(button1)
-layout.addWidget(panel1F)
-layout.addWidget(panel2)
-layout.addWidget(button2)
-layout.addWidget(panel2F)
-layout.addWidget(panel3)
-layout.addWidget(button3)
-layout.addWidget(panel3F)
-layout.addWidget(progressBar)
-layout.addStretch()
-
-layout.setAlignment(panel1, Qt.AlignCenter)
-layout.setAlignment(panel2, Qt.AlignCenter)
-layout.setAlignment(panel3, Qt.AlignCenter)
-layout.setAlignment(panel1F, Qt.AlignCenter)
-layout.setAlignment(panel2F, Qt.AlignCenter)
-layout.setAlignment(panel3F, Qt.AlignCenter)
-
-window.setLayout(layout)
+# Instancia la ventana de la aplicación y la inicia
+window = ButtonClickerApp()
 window.show()
 
+# Inicia el flujo de code de la app
 app.exec_()
